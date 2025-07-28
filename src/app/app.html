@@ -1,0 +1,177 @@
+<div
+  class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4"
+>
+  <mat-card class="w-full max-w-2xl shadow-xl">
+    <mat-card-header class="text-center pb-6">
+      <mat-card-title class="text-3xl font-bold text-gray-800 mb-2">
+        <mat-icon class="mr-3 text-4xl align-middle text-indigo-600"
+          >videocam</mat-icon
+        >
+        Bildschirm-Aufnahme
+      </mat-card-title>
+      <mat-card-subtitle class="text-lg text-gray-600">
+        Nehmen Sie Ihren gesamten Bildschirm als Video auf
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="space-y-6">
+      <!-- Browser Support Check -->
+      @if (!isSupported) {
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div class="flex items-center">
+            <mat-icon class="text-red-500 mr-3">error</mat-icon>
+            <div>
+              <p class="text-red-800 font-semibold">
+                Browser nicht unterstützt
+              </p>
+              <p class="text-red-600 text-sm">
+                Ihr Browser unterstützt die Bildschirmaufnahme nicht. Bitte
+                verwenden Sie einen modernen Browser wie Chrome, Firefox oder
+                Edge.
+              </p>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Recording Status -->
+      @if (isSupported) {
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center">
+              <div
+                class="w-4 h-4 rounded-full mr-3"
+                [class]="{
+                  'bg-green-500 animate-pulse': isRecording() && !isPaused(),
+                  'bg-yellow-500': isRecording() && isPaused(),
+                  'bg-gray-400': !isRecording(),
+                }"
+              ></div>
+              <span class="text-lg font-semibold text-gray-800">{{
+                statusText()
+              }}</span>
+            </div>
+
+            <!-- Duration Display -->
+            @if (isRecording()) {
+              <div class="text-2xl font-mono font-bold text-indigo-600">
+                {{ formatDuration(duration()) }}
+              </div>
+            }
+          </div>
+
+          <!-- Error Message -->
+          @if (error()) {
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+              <div class="flex items-center">
+                <mat-icon class="text-red-500 mr-3">error</mat-icon>
+                <p class="text-red-800">{{ error() }}</p>
+              </div>
+            </div>
+          }
+
+          <!-- Instructions -->
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div class="flex items-start">
+              <mat-icon class="text-blue-500 mr-3 mt-1">info</mat-icon>
+              <div>
+                <p class="text-blue-800 font-semibold mb-2">
+                  So funktioniert's:
+                </p>
+                <ol
+                  class="text-blue-700 text-sm space-y-1 list-decimal list-inside"
+                >
+                  <li>Klicken Sie auf "Aufnahme starten"</li>
+                  <li>
+                    Wählen Sie den Bildschirm oder das Fenster aus, das Sie
+                    aufnehmen möchten
+                  </li>
+                  <li>Die Aufnahme beginnt automatisch</li>
+                  <li>
+                    Verwenden Sie die Steuerelemente zum Pausieren oder Stoppen
+                  </li>
+                  <li>Das Video wird automatisch heruntergeladen</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <!-- Control Buttons -->
+          <div class="flex flex-wrap gap-3 justify-center">
+            <!-- Start Recording Button -->
+            @if (!isRecording()) {
+              <button
+                mat-raised-button
+                color="primary"
+                class="px-8 py-3 text-lg"
+                (click)="startRecording()"
+              >
+                <mat-icon class="mr-2">play_circle</mat-icon>
+                Aufnahme starten
+              </button>
+            }
+
+            <!-- Pause/Resume Button -->
+            @if (isRecording()) {
+              <button
+                mat-raised-button
+                color="accent"
+                class="px-6 py-3"
+                (click)="togglePause()"
+              >
+                <mat-icon class="mr-2">{{
+                  isPaused() ? "play_arrow" : "pause"
+                }}</mat-icon>
+                {{ isPaused() ? "Fortsetzen" : "Pausieren" }}
+              </button>
+            }
+
+            <!-- Stop Recording Button -->
+            @if (isRecording()) {
+              <button
+                mat-raised-button
+                color="warn"
+                class="px-6 py-3"
+                (click)="stopRecording()"
+              >
+                <mat-icon class="mr-2">stop</mat-icon>
+                Aufnahme stoppen
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Technical Info -->
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <div class="flex items-start">
+          <mat-icon class="text-gray-500 mr-3 mt-1">settings</mat-icon>
+          <div>
+            <p class="text-gray-700 font-semibold mb-2">Technische Details:</p>
+            <ul class="text-gray-600 text-sm space-y-1">
+              <li>• Format: WebM (VP9 Codec)</li>
+              <li>• Auflösung: Bis zu 1920x1080</li>
+              <li>• Framerate: 30 FPS</li>
+              <li>• Audio: Inklusive Systemsound</li>
+
+              <!-- Pause/Resume Button -->
+              <ng-container *ngIf="isRecording()">
+                <button
+                  mat-raised-button
+                  color="accent"
+                  class="px-6 py-3"
+                  (click)="togglePause()"
+                >
+                  <mat-icon class="mr-2">{{
+                    isPaused() ? "play_arrow" : "pause"
+                  }}</mat-icon>
+                  {{ isPaused() ? "Fortsetzen" : "Pausieren" }}
+                </button>
+              </ng-container>
+            </ul>
+          </div>
+        </div>
+      </div></mat-card-content
+    ></mat-card
+  >
+</div>
